@@ -1,5 +1,5 @@
 /**
- * Licensed to the RxJava Connector Kafka under one or more
+ * Licensed to the RxJava Connector HTTP under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
@@ -16,6 +16,7 @@
  */
 package com.github.hekonsek.rxjava.connector.http;
 
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
@@ -26,7 +27,11 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
+
+import static com.github.hekonsek.rxjava.event.Headers.responseCallback;
 import static io.vertx.reactivex.core.Vertx.vertx;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.Timeout.seconds;
 
 @RunWith(VertxUnitRunner.class)
@@ -64,6 +69,23 @@ public class HttpSourceTest {
             if(async.count() == 0) {
                 async.complete();
             }
+        }).end(new JsonObject().put("foo", "bar").toString());
+    }
+
+    @Test
+    public void shouldRespond(TestContext context) {
+        Async async = context.async();
+        HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
+        httpSourceFactory.build("/foo").build().subscribe(event -> {
+            responseCallback(event).get().respond(event.payload());
+        });
+        httpSourceFactory.listen(8082);
+
+        vertx.createHttpClient().post(8082, "localhost", "/foo").handler(response -> {
+            response.bodyHandler( body -> {
+                assertThat(Json.decodeValue(body.getDelegate(), Map.class)).containsEntry("foo", "bar");
+                async.complete();
+            });
         }).end(new JsonObject().put("foo", "bar").toString());
     }
 
