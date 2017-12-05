@@ -17,6 +17,7 @@
 package com.github.hekonsek.rxjava.connector.http;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.http.HttpServer;
 import io.vertx.reactivex.core.http.HttpServerRequest;
@@ -36,12 +37,12 @@ public class HttpSourceFactory {
         return new HttpSource(requests.filter(request -> request.uri().equals(uri)));
     }
 
-    public void listen(int port) {
-        server.listen(port);
+    public Single<HttpServer> listen(int port) {
+        return server.rxListen(port);
     }
 
-    public void listen() {
-        server.listen(8080);
+    public Single<HttpServer> listen() {
+        return server.rxListen(8080);
     }
 
 }

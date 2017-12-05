@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,9 +47,9 @@ public class HttpSourceTest {
         Async async = context.async();
         HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
         httpSourceFactory.build("/foo").build().subscribe(event -> async.complete());
-        httpSourceFactory.listen();
-
-        vertx.createHttpClient().post(8080, "localhost", "/foo").handler(response -> {}).end(new JsonObject().put("foo", "bar").toString());
+        httpSourceFactory.listen(8080).subscribe(server ->
+                vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
+                }).end(new JsonObject().put("foo", "bar").toString()));
     }
 
     @Test
@@ -58,18 +58,18 @@ public class HttpSourceTest {
         HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
         httpSourceFactory.build("/foo").build().subscribe(event -> async.countDown());
         httpSourceFactory.build("/bar").build().subscribe(event -> async.countDown());
-        httpSourceFactory.listen(8081);
-
-        vertx.createHttpClient().post(8081, "localhost", "/foo").handler(response -> {
-            if(async.count() == 0) {
-                async.complete();
-            }
-        }).end(new JsonObject().put("foo", "bar").toString());
-        vertx.createHttpClient().post(8081, "localhost", "/bar").handler(response -> {
-            if(async.count() == 0) {
-                async.complete();
-            }
-        }).end(new JsonObject().put("foo", "bar").toString());
+        httpSourceFactory.listen(8081).subscribe(server -> {
+            vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
+                if (async.count() == 0) {
+                    async.complete();
+                }
+            }).end(new JsonObject().put("foo", "bar").toString());
+            vertx.createHttpClient().post(server.actualPort(), "localhost", "/bar").handler(response -> {
+                if (async.count() == 0) {
+                    async.complete();
+                }
+            }).end(new JsonObject().put("foo", "bar").toString());
+        });
     }
 
     @Test
@@ -79,14 +79,13 @@ public class HttpSourceTest {
         httpSourceFactory.build("/foo").build().subscribe(event -> {
             responseCallback(event).get().respond(event.payload());
         });
-        httpSourceFactory.listen(8082);
-
-        vertx.createHttpClient().post(8082, "localhost", "/foo").handler(response -> {
-            response.bodyHandler( body -> {
-                assertThat(Json.decodeValue(body.getDelegate(), Map.class)).containsEntry("foo", "bar");
-                async.complete();
-            });
-        }).end(new JsonObject().put("foo", "bar").toString());
+        httpSourceFactory.listen(8082).subscribe(server ->
+                vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
+                    response.bodyHandler(body -> {
+                        assertThat(Json.decodeValue(body.getDelegate(), Map.class)).containsEntry("foo", "bar");
+                        async.complete();
+                    });
+                }).end(new JsonObject().put("foo", "bar").toString()));
     }
 
 }
