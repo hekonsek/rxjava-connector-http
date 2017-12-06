@@ -1,4 +1,4 @@
-# Licensed to the vertx-pipes project under one or more
+# Licensed to the RxJava Event project under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
 # The licenses this file to You under the Apache License, Version 2.0
@@ -17,14 +17,16 @@
 
 set -e
 
-OLD_VERSION="${1}"
-NEW_VERSION="${2}"
+if [ -z "${OLD_VERSION}" ]; then
+    OLD_VERSION=`git tag | tail -1 | sed 's/.*-//g'`
+    if [ -z "${OLD_VERSION}" ]; then
+        OLD_VERSION='0.0'
+        NEW_VERSION='0.0'
+    fi
+fi
 
-if [ -z "${OLD_VERSION}" ] || [ -z "${NEW_VERSION}" ]; then
-    echo 'Please specify the latest and the new version of vertx-pipes. For example:'
-    echo
-    echo '  release.sh 0.0.5 0.0.6'
-    exit
+if [ -z "${NEW_VERSION}" ]; then
+    NEW_VERSION=`python -c "print $OLD_VERSION+0.1"`
 fi
 
 mvn -Darguments="-Dmaven.test.skip=true -Dgpg.passphrase=${GPG_PASSWORD}" release:prepare release:perform
