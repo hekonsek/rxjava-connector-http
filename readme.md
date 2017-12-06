@@ -1,9 +1,9 @@
-# RxJava Kafka connector
+# RxJava HTTP connector
 
-[![Version](https://img.shields.io/badge/RxJava%20Connector%20Kafka-0.2-blue.svg)](https://github.com/hekonsek/rxjava-connector-kafka/releases)
-[![Build](https://api.travis-ci.org/hekonsek/rxjava-connector-kafka.svg)](https://travis-ci.org/hekonsek/rxjava-connector-kafka)
+[![Version](https://img.shields.io/badge/RxJava%20Connector%20HTTP-0.0-blue.svg)](https://github.com/hekonsek/rxjava-connector-http/releases)
+[![Build](https://api.travis-ci.org/hekonsek/rxjava-connector-http.svg)](https://travis-ci.org/hekonsek/rxjava-connector-http)
 
-Connector between RxJava events and [Apache Kafka](https://kafka.apache.org) cluster.
+Connector between RxJava and HTTP endpoints.
 
 ## Installation
 
@@ -11,29 +11,20 @@ In order to start using Vert.x Pipes add the following dependency to your Maven 
 
     <dependency>
       <groupId>com.github.hekonsek</groupId>
-      <artifactId>vertx-connector-kafka</artifactId>
-      <version>0.2</version>
+      <artifactId>vertx-connector-http</artifactId>
+      <version>0.0</version>
     </dependency>
 
 ## Usage
 
-This is how you can start consuming messages from Kafka topic:
+This is how you can start embedded Vert.x-based HTTP server and consume incoming requests:
 
 ```
-import static com.github.hekonsek.rxjava.connector.kafka.KafkaEventAdapter.simpleMapping;
-import static com.github.hekonsek.rxjava.connector.kafka.KafkaHeaders.partition;
-import static com.github.hekonsek.rxjava.event.Headers.address;
-import static com.github.hekonsek.rxjava.event.Headers.key;
-...
-
-new KafkaSource<String, String>(vertx(), topic).
-  eventAdapter(simpleMapping(StringDeserializer.class, StringDeserializer.class)).build().
-  subscribe(event -> {
-    String payload = event.payload();
-    String key = key(event);
-    String topic = address(event);
-    int partition = partition(event);
-  });
+HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
+httpSourceFactory.build("/foo").build().subscribe(event ->
+  System.out.println("POSTed JSON: " + event.payload())
+);
+httpSourceFactory.listen().subscribe();
 ```
 
 ## License
