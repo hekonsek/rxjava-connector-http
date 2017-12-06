@@ -12,7 +12,7 @@
     <groupId>com.github.hekonsek</groupId>
     <artifactId>rxjava-connector-http</artifactId>
     <name>${project.artifactId}</name>
-    <version>0.0-SNAPSHOT</version>
+    <version>0.0</version>
 
     <properties>
         <!-- General project settings -->
@@ -253,7 +253,7 @@
         <connection>scm:git:git@github.com:hekonsek/rxjava-connector-http.git</connection>
         <developerConnection>scm:git:git@github.com:hekonsek/rxjava-connector-http.git</developerConnection>
         <url>git@github.com:hekonsek/rxjava-connector-http.git</url>
-        <tag>HEAD</tag>
+        <tag>rxjava-connector-http-0.0</tag>
     </scm>
 
     <distributionManagement>
