@@ -27,7 +27,7 @@ httpSourceFactory.build("/foo").build().subscribe(event ->
 httpSourceFactory.listen().subscribe();
 ```
 
-If you would like to send replay back to the request, you need to obtain response callback from
+If you would like to send a response back to the client, you need to obtain a response callback from
 the incoming request event:
 
 ```
