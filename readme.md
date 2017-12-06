@@ -33,6 +33,7 @@ the incoming request event:
 ```
 import static import io.vertx.core.json.Json.encode;
 import static com.github.hekonsek.rxjava.event.Headers.responseCallback;
+
 ...
 
 HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
