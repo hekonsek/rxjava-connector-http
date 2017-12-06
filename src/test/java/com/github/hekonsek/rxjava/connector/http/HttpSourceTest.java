@@ -27,6 +27,8 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.Map;
 
 import static com.github.hekonsek.rxjava.event.Headers.responseCallback;
@@ -47,7 +49,7 @@ public class HttpSourceTest {
         Async async = context.async();
         HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
         httpSourceFactory.build("/foo").build().subscribe(event -> async.complete());
-        httpSourceFactory.listen(8080).subscribe(server ->
+        httpSourceFactory.listen(freePort()).subscribe(server ->
                 vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
                 }).end(new JsonObject().put("foo", "bar").toString()));
     }
@@ -58,7 +60,7 @@ public class HttpSourceTest {
         HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
         httpSourceFactory.build("/foo").build().subscribe(event -> async.countDown());
         httpSourceFactory.build("/bar").build().subscribe(event -> async.countDown());
-        httpSourceFactory.listen(8081).subscribe(server -> {
+        httpSourceFactory.listen(freePort()).subscribe(server -> {
             vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
                 if (async.count() == 0) {
                     async.complete();
@@ -79,13 +81,21 @@ public class HttpSourceTest {
         httpSourceFactory.build("/foo").build().subscribe(event -> {
             responseCallback(event).get().respond(event.payload());
         });
-        httpSourceFactory.listen(8082).subscribe(server ->
+        httpSourceFactory.listen(freePort()).subscribe(server ->
                 vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
                     response.bodyHandler(body -> {
                         assertThat(Json.decodeValue(body.getDelegate(), Map.class)).containsEntry("foo", "bar");
                         async.complete();
                     });
                 }).end(new JsonObject().put("foo", "bar").toString()));
+    }
+
+    private int freePort() {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
