@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/RxJava%20Connector%20HTTP-0.0-blue.svg)](https://github.com/hekonsek/rxjava-connector-http/releases)
 [![Build](https://api.travis-ci.org/hekonsek/rxjava-connector-http.svg)](https://travis-ci.org/hekonsek/rxjava-connector-http)
 
-Connector between RxJava and HTTP endpoints.
+Connector for RxJava bridging HTTP endpoint with [RxJava events](https://github.com/hekonsek/rxjava-event).
 
 ## Installation
 
@@ -26,6 +26,22 @@ httpSourceFactory.build("/foo").build().subscribe(event ->
 );
 httpSourceFactory.listen().subscribe();
 ```
+
+If you would like to send replay back to the request, you need to obtain response callback from
+the incoming request event:
+
+```
+import static import io.vertx.core.json.Json.encode;
+import static com.github.hekonsek.rxjava.event.Headers.responseCallback;
+...
+
+HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
+httpSourceFactory.build("/foo").build().subscribe(event ->
+  responseCallback(event).get().respond(encode(ImmutableMap.of("hello", ""world)));
+);
+httpSourceFactory.listen().subscribe();
+```
+
 
 ## License
 
