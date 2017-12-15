@@ -11,7 +11,7 @@ In order to start using Vert.x Pipes add the following dependency to your Maven 
 
     <dependency>
       <groupId>com.github.hekonsek</groupId>
-      <artifactId>vertx-connector-http</artifactId>
+      <artifactId>rxjava-connector-http</artifactId>
       <version>0.0</version>
     </dependency>
 
