@@ -86,11 +86,7 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
-                                <requireUpperBoundDeps>
-                                    <excludes>
-                                        <exclude>org.apache.kafka:connect-api</exclude>
-                                    </excludes>
-                                </requireUpperBoundDeps>
+                                <requireUpperBoundDeps/>
                             </rules>
                         </configuration>
                         <goals>
