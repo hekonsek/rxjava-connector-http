@@ -21,13 +21,15 @@
         <maven.compiler.source>1.8</maven.compiler.source>
 
         <!-- Dependencies versions -->
-        <assertj.version>3.6.2</assertj.version>
+        <assertj.version>3.8.0</assertj.version>
         <junit.version>4.12</junit.version>
+        <logback.version>1.2.2</logback.version>
+        <rxjava-event.version>0.7</rxjava-event.version>
         <vertx.version>3.5.0</vertx.version>
 
         <!-- Plugins versions -->
         <maven-enforcer-plugin.version>3.0.0-M1</maven-enforcer-plugin.version>
-        <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
@@ -38,7 +40,7 @@
         <dependency>
             <groupId>com.github.hekonsek</groupId>
             <artifactId>rxjava-event</artifactId>
-            <version>0.5</version>
+            <version>${rxjava-event.version}</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
@@ -50,7 +52,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.2</version>
+            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

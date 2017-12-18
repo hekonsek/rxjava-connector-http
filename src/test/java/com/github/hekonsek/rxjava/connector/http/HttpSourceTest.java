@@ -16,7 +16,6 @@
  */
 package com.github.hekonsek.rxjava.connector.http;
 
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
@@ -31,7 +30,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Map;
 
-import static com.github.hekonsek.rxjava.event.Headers.responseCallback;
+import static com.github.hekonsek.rxjava.event.Headers.requiredReplyHandler;
+import static io.vertx.core.json.Json.decodeValue;
 import static io.vertx.reactivex.core.Vertx.vertx;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.Timeout.seconds;
@@ -79,12 +79,12 @@ public class HttpSourceTest {
         Async async = context.async();
         HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
         httpSourceFactory.build("/foo").build().subscribe(event -> {
-            responseCallback(event).get().respond(event.payload());
+            requiredReplyHandler(event).reply(event.payload());
         });
         httpSourceFactory.listen(freePort()).subscribe(server ->
                 vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
                     response.bodyHandler(body -> {
-                        assertThat(Json.decodeValue(body.getDelegate(), Map.class)).containsEntry("foo", "bar");
+                        assertThat(decodeValue(body.getDelegate(), Map.class)).containsEntry("foo", "bar");
                         async.complete();
                     });
                 }).end(new JsonObject().put("foo", "bar").toString()));

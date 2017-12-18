@@ -25,7 +25,7 @@ import java.util.Map;
 
 import static com.github.hekonsek.rxjava.event.Events.event;
 import static com.github.hekonsek.rxjava.event.Headers.ORIGINAL;
-import static com.github.hekonsek.rxjava.event.Headers.RESPONSE_CALLBACK;
+import static com.github.hekonsek.rxjava.event.Headers.REPLY_CALLBACK;
 
 public class HttpSource {
 
@@ -39,7 +39,7 @@ public class HttpSource {
         return requests.flatMap(request -> done -> {
                     Map<String, Object> headers = ImmutableMap.of(
                             ORIGINAL, request,
-                            RESPONSE_CALLBACK, new VertxHttpResponseCallback(request)
+                            REPLY_CALLBACK, new VertxHttpReplyHandler(request)
                             );
                     request.bodyHandler(body -> done.onNext(event(headers, body.toJsonObject().getMap())));
                 }
