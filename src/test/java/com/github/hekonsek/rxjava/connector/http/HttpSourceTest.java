@@ -55,6 +55,16 @@ public class HttpSourceTest {
     }
 
     @Test
+    public void getRequestShouldGenerateEmptyPayload(TestContext context) {
+        Async async = context.async();
+        HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
+        httpSourceFactory.build("/foo").build().subscribe(event -> async.complete());
+        httpSourceFactory.listen(freePort()).subscribe(server ->
+                vertx.createHttpClient().get(server.actualPort(), "localhost", "/foo").handler(response -> {
+                }).end());
+    }
+
+    @Test
     public void shouldRouteRequest(TestContext context) {
         Async async = context.async(2);
         HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);

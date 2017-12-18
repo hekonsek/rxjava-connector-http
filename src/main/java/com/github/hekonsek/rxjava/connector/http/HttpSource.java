@@ -41,7 +41,10 @@ public class HttpSource {
                             ORIGINAL, request,
                             REPLY_CALLBACK, new VertxHttpReplyHandler(request)
                             );
-                    request.bodyHandler(body -> done.onNext(event(headers, body.toJsonObject().getMap())));
+                    request.bodyHandler(body -> {
+                        Map<String, Object> payload = body.length() > 0 ? body.toJsonObject().getMap() : ImmutableMap.of();
+                        done.onNext(event(headers, payload));
+                    });
                 }
         );
     }
