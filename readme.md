@@ -2,6 +2,7 @@
 
 [![Version](https://img.shields.io/badge/RxJava%20Connector%20HTTP-0.0-blue.svg)](https://github.com/hekonsek/rxjava-connector-http/releases)
 [![Build](https://api.travis-ci.org/hekonsek/rxjava-connector-http.svg)](https://travis-ci.org/hekonsek/rxjava-connector-http)
+[![Coverage](https://sonarcloud.io/api/badges/measure?key=com.github.hekonsek%3Arxjava-connector-http&metric=coverage)](https://sonarcloud.io/component_measures?id=com.github.hekonsek%3Arxjava-connector-http&metric=coverage)
 
 Connector for RxJava bridging HTTP endpoint with [RxJava events](https://github.com/hekonsek/rxjava-event).
 
