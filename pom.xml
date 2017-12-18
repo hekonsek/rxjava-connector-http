@@ -23,11 +23,12 @@
         <!-- Dependencies versions -->
         <assertj.version>3.8.0</assertj.version>
         <junit.version>4.12</junit.version>
-        <logback.version>1.2.2</logback.version>
+        <logback.version>1.2.3</logback.version>
         <rxjava-event.version>0.7</rxjava-event.version>
         <vertx.version>3.5.0</vertx.version>
 
         <!-- Plugins versions -->
+        <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M1</maven-enforcer-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
@@ -110,7 +111,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>${maven-compiler-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
