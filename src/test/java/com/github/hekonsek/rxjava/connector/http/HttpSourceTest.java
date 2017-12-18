@@ -21,6 +21,7 @@ import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.core.buffer.Buffer;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
@@ -58,10 +59,27 @@ public class HttpSourceTest {
     public void getRequestShouldGenerateEmptyPayload(TestContext context) {
         Async async = context.async();
         HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
-        httpSourceFactory.build("/foo").build().subscribe(event -> async.complete());
+        httpSourceFactory.build("/foo").build().subscribe(event -> {
+            assertThat(event.payload()).isEmpty();
+            async.complete();
+        });
         httpSourceFactory.listen(freePort()).subscribe(server ->
                 vertx.createHttpClient().get(server.actualPort(), "localhost", "/foo").handler(response -> {
                 }).end());
+    }
+
+    @Test
+    public void shouldConsumeBinaryPayload(TestContext context) {
+        Async async = context.async();
+        HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
+        httpSourceFactory.build("/foo").buildBinary().subscribe(event -> {
+            assertThat(event.payload().toJsonObject().getMap()).containsEntry("foo", "bar");
+            async.complete();
+        });
+        httpSourceFactory.listen(freePort()).subscribe(server ->
+                vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
+                }).end(new JsonObject().put("foo", "bar").toString())
+        );
     }
 
     @Test

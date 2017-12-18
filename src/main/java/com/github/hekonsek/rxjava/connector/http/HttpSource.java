@@ -19,6 +19,7 @@ package com.github.hekonsek.rxjava.connector.http;
 import com.github.hekonsek.rxjava.event.Event;
 import com.google.common.collect.ImmutableMap;
 import io.reactivex.Observable;
+import io.vertx.reactivex.core.buffer.Buffer;
 import io.vertx.reactivex.core.http.HttpServerRequest;
 
 import java.util.Map;
@@ -27,6 +28,9 @@ import static com.github.hekonsek.rxjava.event.Events.event;
 import static com.github.hekonsek.rxjava.event.Headers.ORIGINAL;
 import static com.github.hekonsek.rxjava.event.Headers.REPLY_CALLBACK;
 
+/**
+ * Generates observable stream of HTTP requests. Represented as JSON or binary payloads.
+ */
 public class HttpSource {
 
     private final Observable<HttpServerRequest> requests;
@@ -45,6 +49,17 @@ public class HttpSource {
                         Map<String, Object> payload = body.length() > 0 ? body.toJsonObject().getMap() : ImmutableMap.of();
                         done.onNext(event(headers, payload));
                     });
+                }
+        );
+    }
+
+    public Observable<Event<Buffer>> buildBinary() {
+        return requests.flatMap(request -> done -> {
+                    Map<String, Object> headers = ImmutableMap.of(
+                            ORIGINAL, request,
+                            REPLY_CALLBACK, new VertxHttpReplyHandler(request)
+                    );
+                    request.bodyHandler(body -> done.onNext(event(headers, body)));
                 }
         );
     }
