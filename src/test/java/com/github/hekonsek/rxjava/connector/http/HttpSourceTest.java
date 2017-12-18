@@ -90,6 +90,22 @@ public class HttpSourceTest {
                 }).end(new JsonObject().put("foo", "bar").toString()));
     }
 
+    @Test
+    public void shouldReplyWithEmptyBufferForNullResponse(TestContext context) {
+        Async async = context.async();
+        HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
+        httpSourceFactory.build("/foo").build().subscribe(event -> {
+            requiredReplyHandler(event).reply(null);
+        });
+        httpSourceFactory.listen(freePort()).subscribe(server ->
+                vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
+                    response.bodyHandler(body -> {
+                        assertThat(body.toString()).isEmpty();
+                        async.complete();
+                    });
+                }).end(new JsonObject().put("foo", "bar").toString()));
+    }
+
     private int freePort() {
         try (ServerSocket socket = new ServerSocket(0)) {
             return socket.getLocalPort();
