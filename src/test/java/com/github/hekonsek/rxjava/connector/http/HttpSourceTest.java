@@ -21,7 +21,6 @@ import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.reactivex.core.Vertx;
-import io.vertx.reactivex.core.buffer.Buffer;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
@@ -31,6 +30,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Map;
 
+import static com.github.hekonsek.rxjava.connector.http.HttpResponse.httpResponse;
 import static com.github.hekonsek.rxjava.event.Headers.requiredReplyHandler;
 import static io.vertx.core.json.Json.decodeValue;
 import static io.vertx.reactivex.core.Vertx.vertx;
@@ -103,12 +103,28 @@ public class HttpSourceTest {
     }
 
     @Test
-    public void shouldRespond(TestContext context) {
+    public void shouldReplyTextOnly(TestContext context) {
         Async async = context.async();
         HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
         httpSourceFactory.build("/foo").build().subscribe(event -> {
             requiredReplyHandler(event).reply(event.payload());
         });
+        httpSourceFactory.listen(freePort()).subscribe(server ->
+                vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
+                    response.bodyHandler(body -> {
+                        assertThat(decodeValue(body.getDelegate(), Map.class)).containsEntry("foo", "bar");
+                        async.complete();
+                    });
+                }).end(new JsonObject().put("foo", "bar").toString()));
+    }
+
+    @Test
+    public void shouldReplyHttpResponse(TestContext context) {
+        Async async = context.async();
+        HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
+        httpSourceFactory.build("/foo").build().subscribe(event ->
+                requiredReplyHandler(event).reply(httpResponse(event.payload()))
+        );
         httpSourceFactory.listen(freePort()).subscribe(server ->
                 vertx.createHttpClient().post(server.actualPort(), "localhost", "/foo").handler(response -> {
                     response.bodyHandler(body -> {
