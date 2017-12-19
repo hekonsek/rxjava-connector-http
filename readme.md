@@ -1,6 +1,6 @@
 # RxJava HTTP connector
 
-[![Version](https://img.shields.io/badge/RxJava%20Connector%20HTTP-0.0-blue.svg)](https://github.com/hekonsek/rxjava-connector-http/releases)
+[![Version](https://img.shields.io/badge/RxJava%20Connector%20HTTP-0.1-blue.svg)](https://github.com/hekonsek/rxjava-connector-http/releases)
 [![Build](https://api.travis-ci.org/hekonsek/rxjava-connector-http.svg)](https://travis-ci.org/hekonsek/rxjava-connector-http)
 [![Coverage](https://sonarcloud.io/api/badges/measure?key=com.github.hekonsek%3Arxjava-connector-http&metric=coverage)](https://sonarcloud.io/component_measures?id=com.github.hekonsek%3Arxjava-connector-http&metric=coverage)
 
@@ -13,7 +13,7 @@ In order to start using Vert.x Pipes add the following dependency to your Maven 
     <dependency>
       <groupId>com.github.hekonsek</groupId>
       <artifactId>rxjava-connector-http</artifactId>
-      <version>0.0</version>
+      <version>0.1</version>
     </dependency>
 
 ## Usage
