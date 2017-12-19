@@ -32,18 +32,19 @@ If you would like to send a response back to the client, you need to obtain a re
 the incoming request event:
 
 ```
-import static import io.vertx.core.json.Json.encode;
-import static com.github.hekonsek.rxjava.event.Headers.responseCallback;
+import com.github.hekonsek.rxjava.connector.http.HttpSourceFactory;
+import static com.github.hekonsek.rxjava.event.Headers.requiredReplyHandler;
 
 ...
 
 HttpSourceFactory httpSourceFactory = new HttpSourceFactory(vertx);
 httpSourceFactory.build("/foo").build().subscribe(event ->
-  responseCallback(event).get().respond(encode(ImmutableMap.of("hello", ""world)));
+  requiredReplyHandler(event).reply(ImmutableMap.of("hello", ""world));
 );
 httpSourceFactory.listen().subscribe();
 ```
 
+By default response objects are automatically converted to JSON.
 
 ## License
 
